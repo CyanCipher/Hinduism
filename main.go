@@ -3,9 +3,11 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"os/signal"
-	"syscall"
 	"strings"
+	"syscall"
+
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -46,6 +48,10 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	message_array := strings.Split(m.Content, " ")
 
+	if len(message_array) == 1 {
+		return
+	}
+
 	if message_array[0] == "!heading" {
 
 		_, found := saved_scriptures[message_array[1]]
@@ -59,11 +65,61 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if message_array[0] == "!show" {
 		value, found := saved_scriptures[message_array[1]]
 		if found {
-			message, _:= s.ChannelMessageSendReply(m.ChannelID, value, m.Reference())
-			s.MessageThreadStart(m.ChannelID, message.ID, message_array[1], 2)
-			fmt.Println(message.ID)
+			if ch, err := s.State.Channel(m.ChannelID); err != nil || !ch.IsThread() {
+				thread, err := s.MessageThreadStartComplex(m.ChannelID, m.ID, &discordgo.ThreadStart{
+					Name: 					message_array[1],
+					AutoArchiveDuration: 	60,
+					Invitable: 				false,
+					RateLimitPerUser: 		10,
+				})
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				_, _ = s.ChannelMessageSend(thread.ID, value)
+				m.ChannelID = thread.ID
+			} else {
+				_, _ = s.ChannelMessageSendReply(m.ChannelID, value, m.Reference())
+			}
 		} else {
 			s.ChannelMessageSendReply(m.ChannelID, "Error: Heading not found!", m.Reference())
 		}
 	}
+
+	if message_array[0] == "!ask" {
+		query := strings.Join(message_array[1:], " ")
+		response := ask_krishna(query, "n")
+		s.ChannelMessageSendReply(m.ChannelID, response, m.Reference())
+	}
+
+	if message_array[0] == "!ref" {
+		query := strings.Join(message_array[1:], " ")
+		response := ask_krishna(query, "r")
+		s.ChannelMessageSendReply(m.ChannelID, response, m.Reference())
+	}
+}
+
+func ask_krishna(input string, option string) string {
+	f, err := os.Create("query.txt")
+	if err != nil {
+		panic(err)
+	}
+	l, err := f.WriteString(input)
+	if err != nil {
+		f.Close()
+		panic(err)
+	}
+
+	fmt.Println(l)
+	err = f.Close()
+	if err != nil {
+		panic(err)
+	}
+
+	cmd := exec.Command("python", "chat.py", option)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		panic(err)
+	}
+	return string(out)
 }
