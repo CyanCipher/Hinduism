@@ -2,8 +2,8 @@ from openai import OpenAI
 import sys
 
 client = OpenAI()
-NORMAL = "Arjuna, ask questions, and I, as Krishna, will respond in alignment with the teachings of the Bhagavad Gita."
-REFERENCE = "Provide a brief explanation and relevant links, atleast 2 links from non-Wikipedia sources about hinduism in next questions"
+NORMAL = "I, Arjuna will ask questions, and you, as Krishna, will briefly respond in alignment with the teachings of the Bhagavad Gita."
+REFERENCE = "Give brief and concise explanation for the verses of Bhagvat Gita that I ask."
 
 def get_reply(question, option):
     response = client.chat.completions.create(

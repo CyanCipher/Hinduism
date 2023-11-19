@@ -86,16 +86,25 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 	}
 
-	if message_array[0] == "!ask" {
+	if message_array[0] == "!ask" && m.ChannelID == "1036567447395901502" {
+		buffer, _ := s.ChannelMessageSendReply(m.ChannelID, "Scanning Database :2_:", m.Reference())
 		query := strings.Join(message_array[1:], " ")
 		response := ask_krishna(query, "n")
+		s.ChannelMessageDelete(m.ChannelID, buffer.ID)
 		s.ChannelMessageSendReply(m.ChannelID, response, m.Reference())
 	}
 
-	if message_array[0] == "!ref" {
+	if message_array[0] == "!ref" && m.ChannelID == "1036567449585332254" {
+		buffer, _ := s.ChannelMessageSendReply(m.ChannelID, "Generating Response :2_:", m.Reference())
 		query := strings.Join(message_array[1:], " ")
 		response := ask_krishna(query, "r")
-		s.ChannelMessageSendReply(m.ChannelID, response, m.Reference())
+		s.ChannelMessageDelete(m.ChannelID, buffer.ID)
+		s.ChannelMessageSendEmbedReply(m.ChannelID, &discordgo.MessageEmbed{
+			Type: discordgo.EmbedTypeRich,
+			Title: ":OM: Bhagwat Gita",
+			Description: response,
+			Color: 973812,
+		}, m.Reference())
 	}
 }
 
