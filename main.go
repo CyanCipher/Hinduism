@@ -56,8 +56,10 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 		_, found := saved_scriptures[message_array[1]]
 		if !found {
-			saved_scriptures[message_array[1]] = string(m.ReferencedMessage.Content)
-			s.ChannelMessageSendReply(m.ChannelID, "Heading saved...", m.Reference())
+			if m.ReferencedMessage != nil {
+				saved_scriptures[message_array[1]] = string(m.ReferencedMessage.Content)
+				s.ChannelMessageSendReply(m.ChannelID, "Heading saved...", m.Reference())
+			}
 		} else {
 			s.ChannelMessageSendReply(m.ChannelID, "Error: This heading is already saved!", m.Reference())
 		}
@@ -86,7 +88,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 	}
 
-	if message_array[0] == "!ask" && m.ChannelID == "1036567447395901502" {
+	if message_array[0] == "!ask" && m.ChannelID == "1174952393503428701" {
 		buffer, _ := s.ChannelMessageSendReply(m.ChannelID, "Scanning Database :2_:", m.Reference())
 		query := strings.Join(message_array[1:], " ")
 		response := ask_krishna(query, "n")
@@ -94,7 +96,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		s.ChannelMessageSendReply(m.ChannelID, response, m.Reference())
 	}
 
-	if message_array[0] == "!ref" && m.ChannelID == "1036567449585332254" {
+	if message_array[0] == "!ref" && m.ChannelID == "1098091395446755358" {
 		buffer, _ := s.ChannelMessageSendReply(m.ChannelID, "Generating Response :2_:", m.Reference())
 		query := strings.Join(message_array[1:], " ")
 		response := ask_krishna(query, "r")
