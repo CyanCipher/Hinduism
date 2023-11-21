@@ -87,31 +87,38 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			s.ChannelMessageSendReply(m.ChannelID, "Error: Heading not found!", m.Reference())
 		}
 	}
-
 	if message_array[0] == "!ask" && m.ChannelID == "1174952393503428701" {
-		buffer, _ := s.ChannelMessageSendReply(m.ChannelID, "Scanning Database :2_:", m.Reference())
+		buffer, _ := s.ChannelMessageSendReply(m.ChannelID, "Scanning Database...    ", m.Reference())
 		query := strings.Join(message_array[1:], " ")
 		response := ask_krishna(query, "n")
 		s.ChannelMessageDelete(m.ChannelID, buffer.ID)
 		s.ChannelMessageSendReply(m.ChannelID, response, m.Reference())
 	}
 
-	if message_array[0] == "!ref" && m.ChannelID == "1098091395446755358" {
-		buffer, _ := s.ChannelMessageSendReply(m.ChannelID, "Generating Response :2_:", m.Reference())
+	if message_array[0] == "!ref" && m.ChannelID == "1174952393503428701" {
+		buffer, _ := s.ChannelMessageSendReply(m.ChannelID, "Scanning Database...    ", m.Reference())
 		query := strings.Join(message_array[1:], " ")
 		response := ask_krishna(query, "r")
 		s.ChannelMessageDelete(m.ChannelID, buffer.ID)
+		s.ChannelMessageSendReply(m.ChannelID, response, m.Reference())
+	}
+
+	if message_array[0] == ".." && m.ChannelID == "1098091395446755358" {
+		buffer, _ := s.ChannelMessageSendReply(m.ChannelID, "Generating Response.    ..", m.Reference())
+		query := strings.Join(message_array[1:], " ")
+		response := ask_krishna(query, "g")
+		s.ChannelMessageDelete(m.ChannelID, buffer.ID)
 		s.ChannelMessageSendEmbedReply(m.ChannelID, &discordgo.MessageEmbed{
 			Type: discordgo.EmbedTypeRich,
-			Title: ":OM: Bhagwat Gita",
+			Title: "Bhagavad Gita",
 			Description: response,
 			Color: 973812,
 		}, m.Reference())
 	}
+
 }
 
-func ask_krishna(input string, option string) string {
-	f, err := os.Create("query.txt")
+func ask_krishna(input string, option string) string { f, err := os.Create("query.txt")
 	if err != nil {
 		panic(err)
 	}
