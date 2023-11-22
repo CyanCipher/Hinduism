@@ -48,11 +48,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	message_array := strings.Split(m.Content, " ")
 
-	if len(message_array) == 1 {
-		return
-	}
-
-	if message_array[0] == "!heading" {
+	if message_array[0] == "!heading" && len(message_array) > 1 {
 
 		_, found := saved_scriptures[message_array[1]]
 		if !found {
@@ -92,7 +88,12 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		query := strings.Join(message_array[1:], " ")
 		response := ask_krishna(query, "n")
 		s.ChannelMessageDelete(m.ChannelID, buffer.ID)
-		s.ChannelMessageSendReply(m.ChannelID, response, m.Reference())
+		s.ChannelMessageSendEmbedReply(m.ChannelID, &discordgo.MessageEmbed{
+			Type: discordgo.EmbedTypeRich,
+			Title: "Hinduism Bot",
+			Description: response,
+			Color: 973812,
+		}, m.Reference())
 	}
 
 	if message_array[0] == "!ref" && m.ChannelID == "1174952393503428701" {
@@ -100,7 +101,12 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		query := strings.Join(message_array[1:], " ")
 		response := ask_krishna(query, "r")
 		s.ChannelMessageDelete(m.ChannelID, buffer.ID)
-		s.ChannelMessageSendReply(m.ChannelID, response, m.Reference())
+		s.ChannelMessageSendEmbedReply(m.ChannelID, &discordgo.MessageEmbed{
+			Type: discordgo.EmbedTypeRich,
+			Title: "Hinduism Bot",
+			Description: response,
+			Color: 973812,
+		}, m.Reference())
 	}
 
 	if message_array[0] == ".." && m.ChannelID == "1098091395446755358" {
@@ -114,6 +120,22 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			Description: response,
 			Color: 973812,
 		}, m.Reference())
+	}
+
+	if message_array[0] == "!translate" {
+		if m.ReferencedMessage != nil {
+			buffer, _ := s.ChannelMessageSendReply(m.ChannelID, "Translating...", m.Reference())
+			response := ask_krishna(m.ReferencedMessage.Content, "t")
+			s.ChannelMessageDelete(m.ChannelID, buffer.ID)
+			s.ChannelMessageSendEmbedReply(m.ChannelID, &discordgo.MessageEmbed{
+				Type: discordgo.EmbedTypeRich,
+				Title: "Translation",
+				Description: response,
+				Color: 973812,
+			}, m.Reference())
+		} else {
+			s.ChannelMessageSendReply(m.ChannelID, "Nothing to translate here...", m.Reference())
+		}
 	}
 
 }

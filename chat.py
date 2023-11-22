@@ -5,6 +5,7 @@ client = OpenAI()
 NORMAL = "I, Arjuna will ask questions, and you, as Krishna, will briefly respond in alignment with the teachings of the Bhagavad Gita, and don't give answers to any other kind of weird or non-sensical questions, just reply 'That's not an ideal question' if there is anything weird or stupid asked, don't answer controversial questions aswell."
 GITA = "Give brief and concise explanation for the verses of Bhagvat Gita that I ask."
 REFERENCE = "Provide references to these following topics about Hinduism from authentic hinduism related sites, with little to no explanation"
+TRANSLATE = "Translate the provided text into simple english, censor or replace all inappropriate words."
 
 def get_reply(question, option):
     response = client.chat.completions.create(
@@ -34,10 +35,12 @@ def main():
     query = f.readline()
     if sys.argv[1] == "g":
         print(get_reply(query, GITA))
-    elif sys.argv[1] == "n":
-        print(get_reply(query, NORMAL))
     elif sys.argv[1] == "r":
         print(get_reply(query, REFERENCE))
+    elif sys.argv[1] == "n":
+        print(get_reply(query, NORMAL))
+    elif sys.argv[1] == "t":
+        print(get_reply(query, TRANSLATE))
 
 
 if __name__ == "__main__":
